@@ -8,15 +8,22 @@ const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 
 const port = process.env.PORT || 3333
+
 const g = {
   baseurl: `http://localhost:${port}`,
   mockUser: {},
-  sessionBasket: []
+  sessionBasket: [],
+  sentmails: []
+}
+function sendMail (data) {
+  return new Promise(resolve => {
+    g.sentmails.push(data)
+    resolve()
+  })
 }
 describe('app', () => {
   before(done => {
-    init().then(app => {
-      g.sessionSrvcMock = SessionServiceMock(24000, g)
+    init({ sendMail }).then(app => {
       g.server = app.listen(port, '127.0.0.1', (err) => {
         if (err) return done(err)
         setTimeout(done, 1500)
@@ -27,7 +34,6 @@ describe('app', () => {
     g.server.close(err => {
       return err ? done(err) : done()
     })
-    g.sessionSrvcMock.close()
   })
 
   describe('API', () => {

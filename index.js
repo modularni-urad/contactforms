@@ -2,10 +2,11 @@ import express from 'express'
 import initErrorHandlers from 'modularni-urad-utils/error_handlers'
 import _ from 'underscore'
 import questions from './api/questions'
-import { sendMail } from './api/mailsend'
+import Mailsend from './api/mailsend'
 
 export default async function init (mocks = null) {
   const app = express()
+  const sendMail = await Mailsend(mocks)
   
   app.get('/', (req, res, next) => {
     const q = questions.getRandom()

@@ -1,25 +1,24 @@
 import nodemailer from 'nodemailer'
-const transporterMock = { 
-  sendMail: (data, cb) => {
-    console.log(data)
-    cb()
+
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASSWD
   }
-}
+})
 
-const transporter = process.env.NODE_ENV === 'test'
-  ? transporterMock
-  : nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: "******@gmail.com",
-      pass: "gmail_password"
-    }
-  })
+export default async function (mocks) {
+  if (mocks) return mocks.sendMail
 
-export function sendMail (message) {
-  return new Promise((resolve, reject) => {
-    transporter.sendMail(message, (err) => {
-      return err ? reject(err) : resolve()
+  console.log(`verifying STMP (${process.env.SMTP_CONN}) ...`)
+  await transporter.verify()
+  return function sendMail (message) {
+    return new Promise((resolve, reject) => {
+      transporter.sendMail(message, (err) => {
+        return err ? reject(err) : resolve()
+      })
     })
-  })
+  }
+
 }

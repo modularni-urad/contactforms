@@ -29,12 +29,14 @@ module.exports = (g) => {
       const wrongData = Object.assign({ id: q.id, a: 'wrong' }, p1)
       const res = await r.post('/').send(wrongData)
       res.status.should.equal(400)
+      g.sentmails.length.should.equal(0)
     })
 
     it('shall send message with right answer', async () => {
       const data = Object.assign({ id: 0, a: 'duben' }, p1)
       const res = await r.post('/').send(data)
       res.status.should.equal(200)
+      g.sentmails.length.should.equal(1)
     })
   })
 }
