@@ -17,7 +17,9 @@ export default async function init (mocks = null) {
   app.post('/', express.json(), async (req, res, next) => {
     try {
       const data = await Validate(req.body)
-      const sent = await req.body.to ? sendMail(data) : apiForward(data)
+      const sent = req.body.to 
+        ? await sendMail(data) 
+        : await apiForward(data)
       res.json(sent)
     } catch (err) {
       next(err)
