@@ -4,9 +4,11 @@ import questions from './api/questions'
 import Mailsend from './api/mailsend'
 import Validate from './api/validation'
 import apiForward from './api/forward'
+import cors from 'cors'
 
 export default async function init (mocks = null) {
   const app = express()
+  app.use(cors())
   const sendMail = await Mailsend(mocks)
   
   app.get('/', (req, res, next) => {
