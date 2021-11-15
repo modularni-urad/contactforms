@@ -6,6 +6,11 @@ const q = [
   { q: 'třicet a dvanáct je', a: '42' }
 ]
 
+function getOptions(config) {
+  const aditional = _.get(config, 'contactforms.questions')
+  return aditional ? _.extend(aditional, q) : q
+}
+
 function between (min, max) {  
   return Math.floor(
     Math.random() * (max - min + 1) + min
@@ -13,11 +18,14 @@ function between (min, max) {
 }
 
 export default {
-  getRandom: function () {
-    const idx = between(0, q.length - 1)
-    return { id: idx, q: q[idx].q }
+  getRandom: function (config) {
+    const questions = getOptions(config)
+    const idx = between(0, questions.length - 1)
+    return { id: idx, q: questions[idx].q }
   },
-  validate: function (id, answer) {
-    return answer && id >= 0 && id < q.length && answer.toString() === q[id].a
+  validate: function (id, answer, config) {
+    const questions = getOptions(config)
+    return answer && id >= 0 && id < questions.length 
+      && answer.toString() === questions[id].a
   }
 }

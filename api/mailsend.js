@@ -3,12 +3,12 @@ import nodemailer from 'nodemailer'
 export default function (mocks) {
   if (mocks) return mocks.sendMail
 
-  return async function sendMail (message) {
+  return async function sendMail (message, config) {
     const transporter = nodemailer.createTransport({
-      service: 'Gmail',
+      service: config.mailservice || 'Gmail',
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASSWD
+        user: config.MAIL_USER,
+        pass: config.MAIL_PASSWD
       }
     })
     console.log(`verifying STMP (${process.env.SMTP_CONN}) ...`)
