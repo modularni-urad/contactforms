@@ -18,7 +18,7 @@ module.exports = (g) => {
 
     it('shall forward body to url', async () => {
       const data = Object.assign({ id: 0, a: 'duben' }, p1)
-      const res = await r.post('/').send(data).set('Host', 'api.domain1.cz')
+      const res = await r.post('/api.domain1.cz/').send(data)
       res.status.should.equal(200)
       console.log(g.apimock.basket);
       // g.sentmails.length.should.equal(1)

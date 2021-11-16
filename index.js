@@ -4,7 +4,7 @@ import {
   initErrorHandlers,
   initConfigManager,
   CORSconfigCallback,
-  loadOrgConfig
+  createLoadOrgConfigMW
 } from 'modularni-urad-utils'
 
 import questions from './api/questions'
@@ -19,12 +19,14 @@ export default async function init (mocks = null) {
   process.env.NODE_ENV !== 'test' && app.use(cors(CORSconfigCallback))
   const sendMail = await Mailsend(mocks)
   
-  app.get('/', loadOrgConfig, (req, res, next) => {
+  const api = express()
+
+  api.get('/', (req, res, next) => {
     const q = questions.getRandom(req.orgconfig)
     res.json(q)
   })
 
-  app.post('/', loadOrgConfig, express.json(), async (req, res, next) => {
+  api.post('/', express.json(), async (req, res, next) => {
     try {
       const data = await Validate(req.body, req.orgconfig)
       const sent = req.body.to 
@@ -35,6 +37,11 @@ export default async function init (mocks = null) {
       next(err)
     }    
   })
+
+  const loadOrgConfig = createLoadOrgConfigMW(req => {
+    return req.params.domain
+  })
+  app.use('/:domain/', loadOrgConfig, api)
 
   initErrorHandlers(app)
   return app
