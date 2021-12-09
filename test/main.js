@@ -1,23 +1,23 @@
-/* global describe before after */
-// const fs = require('fs')
 import chai from 'chai'
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
+chai.should()
 
-const g = require('./env/init')
+const g = { chai }
+require('./env/init')(g)
 
 describe('app', () => {
   before(() => {
-    const TestedModule = require('../index')
-    return g.InitApp(TestedModule.default)
+    const InitModule = require('../index')
+    return g.InitApp(InitModule)
   })
   after(g.close)
 
-  describe('API', () => {
+  describe('contactforms API', () => {
     //
     const submodules = [
-      './questions',
-      './forward'
+      './suites/questions_t',
+      './suites/forward_t'
     ]
     submodules.map((i) => {
       const subMod = require(i)

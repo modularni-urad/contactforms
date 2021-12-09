@@ -1,48 +1,33 @@
-import cors from 'cors'
-import express from 'express'
-import {
-  initErrorHandlers,
-  initConfigManager,
-  CORSconfigCallback,
-  createLoadOrgConfigMW
-} from 'modularni-urad-utils'
-
-import questions from './api/questions'
-import Mailsend from './api/mailsend'
+import Questions from './api/questions'
 import Validate from './api/validation'
-import apiForward from './api/forward'
+import Forward from './api/forward'
 
-export default async function init (mocks = null) {
-  await initConfigManager(process.env.CONFIG_FOLDER)
+export async function migrateDB (knex, schemas = null) {
+}
 
-  const app = express()
-  process.env.NODE_ENV !== 'test' && app.use(cors(CORSconfigCallback))
-  const sendMail = await Mailsend(mocks)
-  
+export function init (ctx) {
+  const { bodyParser, express, sendMail } = ctx
+  const forward = Forward(ctx)
+  const questions = Questions(ctx)
+  const validate = Validate(ctx, questions)
   const api = express()
 
   api.get('/', (req, res, next) => {
-    const q = questions.getRandom(req.orgconfig)
+    const q = questions.getRandom(req.tenantcfg)
     res.json(q)
   })
 
-  api.post('/', express.json(), async (req, res, next) => {
+  api.post('/', bodyParser, async (req, res, next) => {
     try {
-      const data = await Validate(req.body, req.orgconfig)
-      const sent = req.body.to 
-        ? await sendMail(data, req.orgconfig) 
-        : await apiForward(data, req.orgconfig)
+      const data = await validate(req.body, req.tenantcfg)
+      const sent = req.body.to
+        ? await sendMail(data) 
+        : await forward(data)
       res.json(sent)
     } catch (err) {
       next(err)
     }    
   })
 
-  const loadOrgConfig = createLoadOrgConfigMW(req => {
-    return req.params.domain
-  })
-  app.use('/:domain/', loadOrgConfig, api)
-
-  initErrorHandlers(app)
-  return app
+  return api
 }

@@ -1,10 +1,6 @@
-/* global describe it */
-const chai = require('chai')
-const should = chai.should()
-
 module.exports = (g) => {
   //
-  const r = chai.request(g.baseurl)
+  const r = g.chai.request(g.baseurl)
 
   const p1 = {
     url: `http://localhost:${g.port + 1}/`,
@@ -18,7 +14,7 @@ module.exports = (g) => {
 
     it('shall forward body to url', async () => {
       const data = Object.assign({ id: 0, a: 'duben' }, p1)
-      const res = await r.post('/api.domain1.cz/').send(data)
+      const res = await r.post('/').send(data)
       res.status.should.equal(200)
       console.log(g.apimock.basket);
       // g.sentmails.length.should.equal(1)
