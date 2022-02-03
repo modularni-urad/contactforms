@@ -12,7 +12,6 @@
   "author": "Vaclav Klecanda <vencax77@gmail.com> (http://vxk.cz)",
   "license": "MIT",
   "dependencies": {
-    "nodemailer": "^6.6.2",
     "hcaptcha": "^0.1.1"
   },
   "peerDependencies": {
