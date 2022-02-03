@@ -21,13 +21,6 @@ module.exports = (g) => {
       response: { id: 111 }
     }
   })
-  g.require = function(name) {
-    try {
-      return require(name)
-    } catch (err) {
-      console.error(err)
-    }    
-  }
   g.sessionSrvcMock = SessionServiceMock.default(process.env.SESSION_SERVICE_PORT, g)
   g.apiMockServer = APIMockInit(port + 1, g)
 
@@ -41,16 +34,9 @@ module.exports = (g) => {
         g.sentmails.push(body)
       },
       bodyParser: express.json(),
-      ErrorClass: APIError,
-      require: function(name) {
-        try {
-          return require(name)
-        } catch (err) {
-          console.error(err)
-        }    
-      }
+      ErrorClass: APIError
     }
-    const mwarez = ApiModule.init(appContext)
+    const mwarez = ApiModule(appContext)
     app.use(mwarez)
 
     initErrorHandlers(app)

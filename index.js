@@ -1,15 +1,9 @@
-import Questions from './api/questions'
-import Validate from './api/validation'
-import Forward from './api/forward'
+import questions from './api/questions'
+import validate from './api/validation'
+import forward from './api/forward'
 
-export async function migrateDB (knex, schemas = null) {
-}
-
-export function init (ctx) {
+export default function initContactforms (ctx) {
   const { bodyParser, express, sendMail } = ctx
-  const forward = Forward(ctx)
-  const questions = Questions(ctx)
-  const validate = Validate(ctx, questions)
   const api = express()
 
   api.get('/', (req, res, next) => {
@@ -26,7 +20,7 @@ export function init (ctx) {
       res.json(sent)
     } catch (err) {
       next(err)
-    }    
+    }
   })
 
   return api
