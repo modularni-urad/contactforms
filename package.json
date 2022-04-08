@@ -15,7 +15,7 @@
     "hcaptcha": "^0.1.1"
   },
   "peerDependencies": {
-    "axios": "^0.24",
+    "axios": "~0.24.0",
     "underscore": "^1.13.1",
     "modularni-urad-utils": "^1.5.0"
   },
